@@ -3,6 +3,7 @@
 //  ModernNetworking
 //
 //  Created by Manyuchi, Carrington C on 2026/06/11.
+//    Development - Delivery
 //
 
 import SwiftUI
@@ -18,7 +19,6 @@ struct LoginView: View {
     var body: some View {
         ZStack {
             VStack(alignment: .leading) {
-                // Error message display
                 if let errorMessage = viewModel.errorMessage {
                     Text(errorMessage)
                         .foregroundColor(.red)
@@ -77,15 +77,12 @@ struct LoginView: View {
                         .background(viewModel.isFormValid ? .green : .gray)
                         .clipShape(RoundedRectangle(cornerRadius: 12))
                 }
-                .disabled(!viewModel.isFormValid || viewModel.isLoading)
-                
-                if viewModel.isLoading {
-                    ProgressView()
-                        .padding()
-                }
+                //.disabled(!viewModel.isFormValid || viewModel.isLoading)
+
             }
             .padding(.horizontal)
         }
+        .ignoresSafeArea()
         .navigationDestination(isPresented: $viewModel.isLoggedIn) {
             ContentView()
                 .navigationBarBackButtonHidden(true)
@@ -98,6 +95,22 @@ struct LoginView: View {
         } message: {
             if let errorMessage = viewModel.errorMessage {
                 Text(errorMessage)
+            }
+        }
+        .overlay {
+            if viewModel.isLoading {
+                ZStack {
+                    ProgressView()
+                        .font(.largeTitle)
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        .scaleEffect(1.5)
+                        .tint(.white)
+                }
+                .frame(height: .infinity)
+                .transition(.opacity)
+                .ignoresSafeArea()
+                .background(.black.opacity(0.4))
+                .animation(.easeInOut(duration: 0.2), value: viewModel.isLoading)
             }
         }
     }

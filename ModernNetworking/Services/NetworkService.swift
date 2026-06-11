@@ -48,14 +48,13 @@ final class NetworkServiceImplementation: NetworkService {
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         request.setValue(apiKey, forHTTPHeaderField: "X-API-Key")
         
-        // Add bearer token if available
         if let token = authToken {
             request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
         }
-        
-#if DEBUG
-        print("🔑 API Key added to headers: \(apiKey.prefix(10))...")
-#endif
+            
+    #if DEBUG
+            print("🔑 API Key added to headers: \(apiKey.prefix(10))...")
+    #endif
     }
     
     // MARK: - GET Request
