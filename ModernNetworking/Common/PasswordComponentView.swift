@@ -14,8 +14,7 @@ struct PasswordComponentView: View {
     var body: some View {
         if showPassword {
             TextField("Enter your password", text: $password)
-                .font(.system(size: 14))
-                .textInputAutocapitalization(.never)
+                .textFieldStyle(AuthTextFieldStyle())
                 .overlay(alignment: .trailing) {
                     Button {
                         showPassword = false
@@ -25,14 +24,9 @@ struct PasswordComponentView: View {
                     }
                     .padding(.bottom, 15)
                 }
-            
-            Rectangle().foregroundStyle(.black.opacity(0.2))
-                .frame(height: 1)
-                .padding(.bottom, 15)
         } else {
             SecureField("Enter your password", text: $password)
-                .font(.system(size: 14))
-                .textInputAutocapitalization(.never)
+                .textFieldStyle(AuthTextFieldStyle())
                 .overlay(alignment: .trailing) {
                     Button {
                         showPassword = true
@@ -42,11 +36,6 @@ struct PasswordComponentView: View {
                     }
                     .padding(.bottom, 15)
                 }
-            
-            Rectangle()
-                .background(.black.opacity(0.2))
-                .frame(height: 1)
-                .padding(.bottom, 15)
         }
     }
 }
@@ -54,7 +43,7 @@ struct PasswordComponentView: View {
 
 #Preview {
     PasswordComponentView(
-        showPassword: .constant(false),
+        showPassword: .constant(true),
         password: .constant("")
     )
 }
