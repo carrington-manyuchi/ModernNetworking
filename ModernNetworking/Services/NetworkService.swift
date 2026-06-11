@@ -42,7 +42,6 @@ protocol NetworkService {
     func post<T: Encodable, U: Decodable>(_ request: T, to path: String) async throws -> U
     func put<T: Encodable, U: Decodable>(_ request: T, to path: String) async throws -> U
     func delete<U: Decodable>(_ path: String) async throws -> U
-    
 }
 
 
