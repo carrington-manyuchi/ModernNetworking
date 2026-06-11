@@ -32,8 +32,7 @@ final class LoginViewModel: ObservableObject {
         
     var isFormValid: Bool {
         !username.trimmingCharacters(in: .whitespaces).isEmpty &&
-        password.count >= 4 &&  // Changed to match validation (4 characters)
-        !isLoading
+        password.count >= 4 && !isLoading
     }
     
     func login() async {
@@ -58,7 +57,6 @@ final class LoginViewModel: ObservableObject {
             presentAlert = true
             print(errorMessage)
         }
-        
         isLoading = false
     }
     
@@ -83,7 +81,7 @@ final class LoginViewModel: ObservableObject {
         }
         
         if password.count < 4 {
-            errorMessage = "Password must be at least 4 characters"  // Changed to match validation
+            errorMessage = "Password must be at least 4 characters"
             print(errorMessage)
             return false
         }

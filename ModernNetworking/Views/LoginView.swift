@@ -41,30 +41,14 @@ struct LoginView: View {
                     }
                 } label: {
                     Text("Login")
-                        .font(.system(size: 15, weight: .semibold))
-                        .foregroundStyle(.white)
-                        .padding(12)
-                        .frame(maxWidth: .infinity)
-                        .background(viewModel.isFormValid ? .green : .gray)
-                        .clipShape(RoundedRectangle(cornerRadius: 12))
                 }
+                .buttonStyle(PrimaryButtonStyle())
                 .disabled(!viewModel.isFormValid || viewModel.isLoading)
-
             }
             .padding(.horizontal)
             
                 if viewModel.isLoading {
-                    ZStack {
-                        ProgressView()
-                            .font(.largeTitle)
-                            .frame(maxWidth: .infinity, maxHeight: .infinity)
-                            .scaleEffect(1.5)
-                            .tint(.white)
-                    }
-                    .transition(.opacity)
-                    .ignoresSafeArea()
-                    .background(.black.opacity(0.4))
-                    .animation(.easeInOut(duration: 0.2), value: viewModel.isLoading)
+                    ProgressComponentView(isLoading: $viewModel.isLoading)
                 }
         }
         .ignoresSafeArea()
