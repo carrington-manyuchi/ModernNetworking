@@ -11,7 +11,9 @@ import SwiftUI
 struct ModernNetworkingApp: App {
     var body: some Scene {
         WindowGroup {
-            LoginView()
+            NavigationStack {
+                LoginView()
+            }
         }
     }
 }

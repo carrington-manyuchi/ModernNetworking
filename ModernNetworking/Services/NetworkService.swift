@@ -7,36 +7,7 @@
 
 import Foundation
 
-
-// MARK: - For different base url?
-enum NetworkServiceEndpoint {
-    case auth(String)
-    case users(String)
-    case payments(String)
-    case analytics(String)
-    
-    var baseURL: String {
-        switch self {
-        case .auth: return "https://auth.myapp.com"
-        case .users: return "https://users.myapp.com"
-        case .payments: return "https://payment.myapp.com"
-        case .analytics: return "https://analytics.myapp.com"
-        }
-    }
-    
-    var fullURL: String {
-        switch self {
-        case .auth(let path): return baseURL + path
-        case .users(let path): return baseURL + path
-        case .payments(let path): return baseURL + path
-        case .analytics(let path): return baseURL + path
-        }
-    }
-}
-
-
-// MARK: - APIService Protocol
-
+// MARK: - Network Service Protocol
 protocol NetworkService {
     func get<U: Decodable>(_ path: String) async throws -> U
     func post<T: Encodable, U: Decodable>(_ request: T, to path: String) async throws -> U
@@ -44,16 +15,17 @@ protocol NetworkService {
     func delete<U: Decodable>(_ path: String) async throws -> U
 }
 
-
-// MARK: - APIService Implementation
-actor NetworkServiceImplementation: NetworkService {
+// MARK: - Network Service Implementation
+final class NetworkServiceImplementation: NetworkService {
     private let baseURL: String
+    private let apiKey: String
     private let session: URLSession
     private let decoder: JSONDecoder
     private let encoder: JSONEncoder
     
-    init(baseURL: String = "https://reqres.in") {
+    init(baseURL: String = "https://reqres.in", apiKey: String = "free_user_32Nrdpujz0B5RtrGYKfKiaiLWHi") {
         self.baseURL = baseURL
+        self.apiKey = apiKey
         self.session = URLSession.shared
         
         self.decoder = JSONDecoder()
@@ -65,42 +37,74 @@ actor NetworkServiceImplementation: NetworkService {
         encoder.dateEncodingStrategy = .iso8601
     }
     
+    private var authToken: String?
+    
+    func setAuthToken(_ token: String) {
+        self.authToken = token
+    }
+    
+    // MARK: - Private Helper Methods   cityslicka    eve.holt@reqres.in
+    private func addAuthHeaders(to request: inout URLRequest) {
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.setValue(apiKey, forHTTPHeaderField: "X-API-Key")
+        
+        // Add bearer token if available
+        if let token = authToken {
+            request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        }
+        
+#if DEBUG
+        print("🔑 API Key added to headers: \(apiKey.prefix(10))...")
+#endif
+    }
+    
     // MARK: - GET Request
     func get<U: Decodable>(_ path: String) async throws -> U {
+        // FIXED: Removed apiKey from URL - it goes in headers, not URL path!
         guard let url = URL(string: baseURL + path) else {
             throw APIError.invalidURL
         }
         
+        print("📡 GET URL: \(url)")
         var request = URLRequest(url: url)
         request.httpMethod = "GET"
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        addAuthHeaders(to: &request)
         
         return try await performRequest(request)
     }
     
-    // MARK: - POST Request with Encodable body
+    // MARK: - POST Request
     func post<T: Encodable, U: Decodable>(_ request: T, to path: String) async throws -> U {
+        // FIXED: Removed apiKey from URL - it goes in headers, not URL path!
         guard let url = URL(string: baseURL + path) else {
             throw APIError.invalidURL
         }
         
+        print("📡 POST URL: \(url)")
         var urlRequest = URLRequest(url: url)
         urlRequest.httpMethod = "POST"
-        urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        addAuthHeaders(to: &urlRequest)
         urlRequest.httpBody = try encoder.encode(request)
+        
+#if DEBUG
+        if let body = urlRequest.httpBody, let bodyString = String(data: body, encoding: .utf8) {
+            print("📡 Request Body: \(bodyString)")
+        }
+#endif
         
         return try await performRequest(urlRequest)
     }
     
-    // MARK: - PUT Request with Encodable body
+    // MARK: - PUT Request
     func put<T: Encodable, U: Decodable>(_ request: T, to path: String) async throws -> U {
+        // FIXED: Removed apiKey from URL - it goes in headers, not URL path!
         guard let url = URL(string: baseURL + path) else {
             throw APIError.invalidURL
         }
         
         var urlRequest = URLRequest(url: url)
         urlRequest.httpMethod = "PUT"
-        urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        addAuthHeaders(to: &urlRequest)
         urlRequest.httpBody = try encoder.encode(request)
         
         return try await performRequest(urlRequest)
@@ -108,13 +112,14 @@ actor NetworkServiceImplementation: NetworkService {
     
     // MARK: - DELETE Request
     func delete<U: Decodable>(_ path: String) async throws -> U {
+        // FIXED: Removed apiKey from URL - it goes in headers, not URL path!
         guard let url = URL(string: baseURL + path) else {
             throw APIError.invalidURL
         }
         
         var request = URLRequest(url: url)
         request.httpMethod = "DELETE"
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        addAuthHeaders(to: &request)
         
         return try await performRequest(request)
     }
@@ -127,6 +132,8 @@ actor NetworkServiceImplementation: NetworkService {
             guard let httpResponse = response as? HTTPURLResponse else {
                 throw APIError.unknown("Invalid response type")
             }
+            
+            print("📡 Status code: \(httpResponse.statusCode)")
             
             switch httpResponse.statusCode {
             case 200...299:
@@ -142,18 +149,21 @@ actor NetworkServiceImplementation: NetworkService {
             }
             
             // Debug: Print response for troubleshooting
-            #if DEBUG
+#if DEBUG
             if let jsonString = String(data: data, encoding: .utf8) {
                 print("📡 Response for \(request.url?.path ?? "unknown"):")
                 print(jsonString)
             }
-            #endif // DEBUG
+#endif
             
             // Decode the response
             do {
                 return try decoder.decode(T.self, from: data)
             } catch {
                 print("❌ Decoding error: \(error)")
+                if let jsonString = String(data: data, encoding: .utf8) {
+                    print("❌ Raw response: \(jsonString)")
+                }
                 throw APIError.decodingFailed
             }
             
@@ -173,4 +183,3 @@ actor NetworkServiceImplementation: NetworkService {
         }
     }
 }
-

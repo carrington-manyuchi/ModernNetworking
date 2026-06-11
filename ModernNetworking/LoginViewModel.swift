@@ -13,8 +13,10 @@ import Combine
 final class LoginViewModel: ObservableObject {
     
     // MARK: - Published Properties (UI State)
-    @Published var username = ""
-    @Published var password = ""
+    @Published var username = ""  // Added @Published
+    @Published var password = ""  // Added @Published
+    @Published var presentAlert = false
+    
     @Published var isLoading = false
     @Published var isLoggedIn = false
     @Published var errorMessage: String?
@@ -23,22 +25,32 @@ final class LoginViewModel: ObservableObject {
     private let repository: NetworkServiceRepository
     
     // MARK: - Initialization
-    init(repository: NetworkServiceRepository = NetworkServiceRepositoryImplementation.self as! NetworkServiceRepository) {
-        self.repository = repository
+    init(repository: NetworkServiceRepository? = nil) {
+        if let repository = repository {
+            self.repository = repository
+        } else {
+            let networkService = NetworkServiceImplementation()
+            self.repository = NetworkServiceRepositoryImplementation(networkService: networkService)
+        }
     }
+    
     
     // MARK: - Computed Properties
     var isFormValid: Bool {
         !username.trimmingCharacters(in: .whitespaces).isEmpty &&
-        password.count >= 6 &&
+        password.count >= 4 &&  // Changed to match validation (4 characters)
         !isLoading
     }
     
+    // MARK: - Public Methods
     func login() async {
-        isLoading = true
+        // Reset states
         errorMessage = nil
+        isLoading = true
         
+        // Validate before making network call
         guard validateInput() else {
+            isLoading = false
             return
         }
         
@@ -48,9 +60,9 @@ final class LoginViewModel: ObservableObject {
                 password: password
             )
             await handleSuccessfulLogin(token: loginResponse.token)
-            
         } catch {
             errorMessage = error.localizedDescription
+            print(errorMessage!)
         }
         
         isLoading = false
@@ -60,23 +72,26 @@ final class LoginViewModel: ObservableObject {
         username = ""
         password = ""
         errorMessage = nil
-        isLoading = false
-        isLoggedIn = false
+        // Don't reset isLoading and isLoggedIn here - they're controlled elsewhere
     }
     
+    // MARK: - Private Methods
     private func validateInput() -> Bool {
         if username.trimmingCharacters(in: .whitespaces).isEmpty {
-            errorMessage = "username is required"
+            errorMessage = "Username is required"
+            print(errorMessage!)
             return false
         }
-
+        
         if password.isEmpty {
             errorMessage = "Password is required"
+            print(errorMessage!)
             return false
         }
         
         if password.count < 4 {
-            errorMessage = "Password must be at least 6 characters"
+            errorMessage = "Password must be at least 4 characters"  // Changed to match validation
+            print(errorMessage!)
             return false
         }
         
@@ -84,8 +99,12 @@ final class LoginViewModel: ObservableObject {
     }
     
     private func handleSuccessfulLogin(token: String) async {
+        // Save token (use Keychain in production)
         UserDefaults.standard.set(token, forKey: "authToken")
+        // Set token in network service for future requests
+        if let networkService = (repository as? NetworkServiceRepositoryImplementation)?.networkService as? NetworkServiceImplementation {
+            networkService.setAuthToken(token)
+        }
         isLoggedIn = true
-        resetForm()
     }
 }

@@ -36,7 +36,7 @@ enum APIError: LocalizedError {
         case .decodingFailed:
             return "Failed to decode response"
         case .unknown(let message):
-            return "Unknown error: \(message)"
+            return "An error occurred: \(message)"
         }
     }
 }

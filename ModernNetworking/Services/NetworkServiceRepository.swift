@@ -16,7 +16,7 @@ protocol NetworkServiceRepository {
 }
 
 final class NetworkServiceRepositoryImplementation: NetworkServiceRepository {
-    private let networkService: NetworkService
+    let networkService: NetworkService
     
     init(networkService: NetworkService) {
         self.networkService = networkService
