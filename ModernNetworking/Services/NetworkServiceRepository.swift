@@ -9,7 +9,7 @@ import Foundation
 // MARK: - Service Protocol
 
 protocol NetworkServiceRepository {
-    func login(username: String, password: String) async throws -> UserInfo
+    func login(username: String, password: String) async throws -> Login
     func fetchEmployees(page: Int) async throws -> Employees
     func fetchColors() async throws -> UserColor
     func updateUser(userId: Int, firstName: String, lastName: String, email: String) async throws -> Employee
@@ -22,8 +22,8 @@ final class NetworkServiceRepositoryImplementation: NetworkServiceRepository {
         self.networkService = networkService
     }
     
-    func login(username: String, password: String) async throws -> UserInfo {
-        let request = UserRequest(username: username, password: password)
+    func login(username: String, password: String) async throws -> Login {
+        let request = LoginRequest(username: username, password: password)
         return try await networkService.post(request, to: "/api/login")
     }
     

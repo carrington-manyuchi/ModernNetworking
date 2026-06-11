@@ -10,7 +10,7 @@ import Foundation
 
 // MARK: - Login DTOs (Data Transfer Objects)
 struct LoginRequest: Encodable {
-    let email: String
+    let username: String
     let password: String
 }
 
