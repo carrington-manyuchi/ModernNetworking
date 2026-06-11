@@ -9,7 +9,7 @@ import Foundation
 
 
 // MARK: - For different base url?
-enum APIEndpoint {
+enum NetworkServiceEndpoint {
     case auth(String)
     case users(String)
     case payments(String)
