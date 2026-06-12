@@ -9,13 +9,20 @@ import Foundation
 
 struct Employee: Codable, Hashable {
     let id: Int?
-    let email, firstName, lastName: String?
+    let email: String?
+    let firstName: String?
+    let lastName: String?
     let avatar: String?
-
+    
     enum CodingKeys: String, CodingKey {
-        case id, email
+        case id
+        case email
         case firstName = "first_name"
         case lastName = "last_name"
         case avatar
+    }
+    
+    var fullName: String {
+        return "\(firstName ?? "") \(lastName ?? "")".trimmingCharacters(in: .whitespaces)
     }
 }

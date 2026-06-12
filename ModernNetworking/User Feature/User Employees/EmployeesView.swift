@@ -6,44 +6,47 @@
 //
 
 import SwiftUI
-import SwiftUI
 
 struct EmployeesView: View {
-    @StateObject private var employeesViewModel = EmployeesViewModel()
+    @ObservedObject private var employeesViewModel: EmployeesViewModel
+    @Environment(\.dismiss) private var dismiss
+    
+    init(employeesViewModel: EmployeesViewModel) {
+        self.employeesViewModel = employeesViewModel
+    }
     
     var body: some View {
         VStack {
             if let employees = employeesViewModel.employees?.data {
-                let _ = print("📊 Number of employees: \(employees.count)")
-                if let firstEmployee = employees.first {
-                                    let _ = print("👤 First employee - Name: \(firstEmployee.firstName ?? "nil") \(firstEmployee.lastName ?? "nil")")
-                                    let _ = print("📧 First employee - Email: \(firstEmployee.email ?? "nil")")
-                                    let _ = print("🖼️ First employee - Avatar: \(firstEmployee.avatar ?? "nil")")
-                                }
-
                 List(employees, id: \.id) { employee in
                     HStack {
                         AsyncImageView(
                             url: employee.avatar,
                             placeholder: Image(systemName: "person.circle.fill"),
-                            size: CGSize(width: 50, height: 50),
+                            size: CGSize(width: 25, height: 25),
                             isCircular: true
                         )
                         
-                        
-                        
                         VStack(alignment: .leading, spacing: 4) {
-                            Text("\(employee.firstName ?? "") \(employee.lastName ?? "")")
-                                .font(.system(size: 16, weight: .medium))
-                            
-                            Text(employee.email ?? "")
+                            Text(employee.email ?? "No email")
                                 .font(.system(size: 12))
                                 .foregroundColor(.gray)
                         }
-                        
                         Spacer()
+                        
+                        if employeesViewModel.selectedEmployee?.id == employee.id {
+                            Image(systemName: "checkmark.circle.fill")
+                                .foregroundColor(.blue)
+                                .font(.system(size: 20))
+                        }
+                        
                     }
                     .padding(.horizontal)
+                    .contentShape(Rectangle())
+                    .onTapGesture {
+                        employeesViewModel.selectEmployee(employee)
+                        dismiss()
+                    }
                 }
             } else if employeesViewModel.isLoading {
                 ProgressComponentView(isLoading: $employeesViewModel.isLoading)
@@ -55,14 +58,18 @@ struct EmployeesView: View {
         .navigationTitle("List of employees")
         .navigationBarTitleDisplayMode(.inline)
         .task {
-            await employeesViewModel.fetchEmployees(page: 1)
+            if employeesViewModel.employees == nil {
+                await employeesViewModel.fetchEmployees(page: 1)
+            }
         }
     }
 }
 
 #Preview {
     NavigationStack {
-        EmployeesView()
+        let networkService = NetworkServiceImplementation()
+        let repository = NetworkServiceRepositoryImplementation(networkService: networkService)
+        EmployeesView(employeesViewModel: EmployeesViewModel(repository: repository))
     }
 }
 

@@ -23,14 +23,24 @@ struct DashboardView: View {
             Group {
                 Divider()
                 HStack {
-                    if let firstEmployee = employeesViewModel.employees?.data?.first,
-                       let avatarURL = firstEmployee.avatar {
+                    if let selectedEmployee = employeesViewModel.selectedEmployee,
+                       let avatarURL = selectedEmployee.avatar {
                         AsyncImageView(
                             url: avatarURL,
                             placeholder: Image(systemName: "person.circle.fills"),
                             size: CGSize(width: 50, height: 50),
                             isCircular: true
                         )
+                        
+                    } else if let firstEmployee = employeesViewModel.employees?.data?.first,
+                              let avatarURL = firstEmployee.avatar {
+                        AsyncImageView(
+                            url: avatarURL,
+                            placeholder: Image(systemName: "person.circle.fill"),
+                            size: CGSize(width: 50, height: 50),
+                            isCircular: true
+                        )
+                        
                     } else if employeesViewModel.isLoading {
                         ProgressComponentView(isLoading: $employeesViewModel.isLoading)
                     }  else {
@@ -45,13 +55,13 @@ struct DashboardView: View {
                 }
                 .padding(.horizontal)
                 .padding(.vertical, 2)
+                .onTapGesture {
+                    navigateToEmployeesList = true
+                }
                 Divider()
             }
-            .onTapGesture {
-                navigateToEmployeesList = true
-            }
             .navigationDestination(isPresented: $navigateToEmployeesList) {
-                EmployeesView()
+                EmployeesView(employeesViewModel: employeesViewModel)
             }
             
             VStack( spacing: 30) {
