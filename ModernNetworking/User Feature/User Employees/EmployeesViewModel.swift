@@ -27,22 +27,23 @@ final class EmployeesViewModel: ObservableObject {
         }
     }
     
-    
     @MainActor
     func fetchEmployees(page: Int = 1) async {
         isLoading = true
         errorMessage = ""
-
+        
         do {
             let response = try await repository.fetchEmployees(page: page)
             self.employees = response
             self.isLoading = false
-
+            
         } catch {
             self.errorMessage = error.localizedDescription
             self.isLoading = false
-         
         }
     }
     
+    func selectEmployee(_ employee: Employee) {
+        self.selectedEmployee = employee
+    }
 }

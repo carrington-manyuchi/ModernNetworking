@@ -23,7 +23,7 @@ struct EmployeesView: View {
                         AsyncImageView(
                             url: employee.avatar,
                             placeholder: Image(systemName: "person.circle.fill"),
-                            size: CGSize(width: 25, height: 25),
+                            size: CGSize(width: 50, height: 50),
                             isCircular: true
                         )
                         
@@ -32,14 +32,13 @@ struct EmployeesView: View {
                                 .font(.system(size: 12))
                                 .foregroundColor(.gray)
                         }
-                        Spacer()
                         
+                        Spacer()
                         if employeesViewModel.selectedEmployee?.id == employee.id {
                             Image(systemName: "checkmark.circle.fill")
-                                .foregroundColor(.blue)
+                                .foregroundColor(.gray.opacity(0.5))
                                 .font(.system(size: 20))
                         }
-                        
                     }
                     .padding(.horizontal)
                     .contentShape(Rectangle())
@@ -72,22 +71,3 @@ struct EmployeesView: View {
         EmployeesView(employeesViewModel: EmployeesViewModel(repository: repository))
     }
 }
-
-// Add this extension at the bottom of your EmployeesView.swift file
-extension EmployeesView {
-    func debugPrintEmployees() {
-        guard let employees = employeesViewModel.employees?.data else {
-            print("❌ No employees data available")
-            return
-        }
-        
-        print("✅ Found \(employees.count) employees")
-        for employee in employees {
-            print("ID: \(employee.id ?? 0)")
-            print("Name: \(employee.firstName ?? "nil") \(employee.lastName ?? "nil")")
-            print("Email: \(employee.email ?? "nil")")
-            print("---")
-        }
-    }
-}
-

@@ -53,6 +53,7 @@ struct DashboardView: View {
                     Image(systemName: "chevron.forward")
                         .font(.title3)
                 }
+                .contentShape(Rectangle())
                 .padding(.horizontal)
                 .padding(.vertical, 2)
                 .onTapGesture {
