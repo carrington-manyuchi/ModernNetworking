@@ -10,14 +10,14 @@ import SwiftUI
 struct ReviewView: View {
     var body: some View {
         VStack(alignment: .leading) {
-            Text("Personal details")
+            Text("Personal Details")
                 .font(.system(size: 18, weight: .semibold))
                 .padding(.horizontal)
-          
+            
             Rectangle()
-            .frame(height: 1)
-            .foregroundStyle(.gray)
-           .shadow(color: .black.opacity(0.5), radius: 1, x: 1, y: 1)
+                .frame(height: 1)
+                .foregroundStyle(.gray)
+                .shadow(color: .black.opacity(0.5), radius: 1, x: 1, y: 1)
             
             HStack {
                 Image(systemName: "person")
@@ -39,16 +39,18 @@ struct ReviewView: View {
             }
             
             Rectangle()
-            .frame(height: 1)
-            .foregroundStyle(.gray)
-           .shadow(color: .black.opacity(0.5), radius: 1, x: 1, y: -1)
+                .frame(height: 1)
+                .foregroundStyle(.gray)
+                .shadow(color: .black.opacity(0.5), radius: 1, x: 1, y: -1)
             
             VStack(alignment: .leading, spacing: 15) {
                 Text("Additional Information")
                     .font(.system(size: 18, weight: .semibold))
                 
                 Group {
+                    Text("Color Text")
                     Text("Nyanga")
+                    Text("Residential address")
                 }
                 .padding(.horizontal)
             }
