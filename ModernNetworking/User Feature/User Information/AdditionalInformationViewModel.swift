@@ -13,6 +13,7 @@ final class AdditionalInformationViewModel: ObservableObject {
     @Published var userData: UserData
     @Published var isLoading = false
     @Published var navigateToReview = false
+    @Published var navigateToAdditionInformation = false
     
     @Published var colors: [ColorResponse] = []
     @Published var selectedColor: ColorResponse?

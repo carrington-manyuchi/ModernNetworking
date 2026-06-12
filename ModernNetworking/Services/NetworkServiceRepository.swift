@@ -32,7 +32,10 @@ final class NetworkServiceRepositoryImplementation: NetworkServiceRepository {
     }
     
     func fetchColors() async throws -> UserColor {
-        return try await networkService.get("/api/unknown?per_page=12")
+        let result: UserColor = try await networkService.get("/api/unknown?per_page=12")
+        print("✅ Successfully decoded \(result.data.count) colors")
+        return result
+
     }
     
     func updateUser(userId: Int, firstName: String, lastName: String, email: String) async throws -> Employee {

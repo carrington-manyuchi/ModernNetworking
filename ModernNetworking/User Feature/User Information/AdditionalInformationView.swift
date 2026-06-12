@@ -61,7 +61,7 @@ struct AdditionalInformationView: View {
                 .contentShape(Rectangle())
                 .padding(.horizontal, 30)
                 .onTapGesture {
-                    showColorPicker = true
+                    viewModel.navigateToAdditionInformation = true
                 }
                 Divider()
             }
@@ -103,6 +103,9 @@ struct AdditionalInformationView: View {
         }
         .navigationTitle("Additional Info")
         .navigationBarTitleDisplayMode(.inline)
+        .navigationDestination(isPresented: $viewModel.navigateToAdditionInformation) {
+            ColorPickerView(viewModel: viewModel)
+        }
         .navigationDestination(isPresented: $viewModel.navigateToReview) {
             ReviewView(viewModel: ReviewViewModel(userData: viewModel.userData))
         }
@@ -122,16 +125,16 @@ struct ColorPickerView: View {
     
     var body: some View {
         NavigationView {
-            List(viewModel.colors, id: \.id) { color in  // 👈 viewModel.colors should be [ColorResponse]
+            List(viewModel.colors, id: \.id) { color in
                 HStack {
                     Circle()
-                        .fill(Color(hex: color.color))  // 👈 Fixed: Use hex initializer
+                        .fill(Color(hex: color.color))
                         .frame(width: 40, height: 40)
                     
                     VStack(alignment: .leading) {
-                        Text(color.name)  // 👈 Fixed: No optional needed
+                        Text(color.name)
                             .font(.headline)
-                        Text("Year: \(color.year)")  // 👈 Fixed: No optional needed
+                        Text("Year: \(color.year)")
                             .font(.caption)
                             .foregroundColor(.gray)
                     }
