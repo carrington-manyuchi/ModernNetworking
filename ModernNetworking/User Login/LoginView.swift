@@ -13,6 +13,7 @@ struct LoginView: View {
     
     var body: some View {
         ZStack {
+
             VStack(alignment: .leading) {
                 
                 Text("Username")
@@ -61,7 +62,6 @@ struct LoginView: View {
         } message: {
                 Text(viewModel.errorMessage)
         }
-        
     }
 }
 
