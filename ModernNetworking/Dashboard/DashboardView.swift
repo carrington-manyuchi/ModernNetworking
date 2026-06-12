@@ -31,6 +31,7 @@ struct DashboardView: View {
                             .font(.title3)
                     }
                     .padding(.horizontal)
+                    .padding(.vertical, 2)
                     Divider()
                 }
                 .onTapGesture {

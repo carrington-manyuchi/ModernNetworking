@@ -19,7 +19,6 @@ struct ReviewView: View {
             .foregroundStyle(.gray)
            .shadow(color: .black.opacity(0.5), radius: 1, x: 1, y: 1)
             
-            
             HStack {
                 Image(systemName: "person")
                     .foregroundStyle(.white)

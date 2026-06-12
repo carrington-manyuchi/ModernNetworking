@@ -13,9 +13,7 @@ struct LoginView: View {
     
     var body: some View {
         ZStack {
-
             VStack(alignment: .leading) {
-                
                 Text("Username")
                     .font(.system(size: 15))
                 
@@ -48,9 +46,9 @@ struct LoginView: View {
             }
             .padding(.horizontal)
             
-                if viewModel.isLoading {
-                    ProgressComponentView(isLoading: $viewModel.isLoading)
-                }
+            if viewModel.isLoading {
+                ProgressComponentView(isLoading: $viewModel.isLoading)
+            }
         }
         .ignoresSafeArea()
         .navigationDestination(isPresented: $viewModel.isLoggedIn) {
@@ -60,7 +58,7 @@ struct LoginView: View {
         .alert("Error", isPresented: $viewModel.presentAlert) {
             
         } message: {
-                Text(viewModel.errorMessage)
+            Text(viewModel.errorMessage)
         }
     }
 }
