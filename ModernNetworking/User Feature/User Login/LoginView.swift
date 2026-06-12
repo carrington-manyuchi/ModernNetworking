@@ -52,7 +52,7 @@ struct LoginView: View {
         }
         .ignoresSafeArea()
         .navigationDestination(isPresented: $viewModel.isLoggedIn) {
-            ContentView()
+            DashboardView()
                 .navigationBarBackButtonHidden(true)
         }
         .alert("Error", isPresented: $viewModel.presentAlert) {

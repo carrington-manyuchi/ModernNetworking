@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct DashboardView: View {
+   @StateObject private var employeesViewModel = EmployeesViewModel()
     @State private var date = Date()
     @State private var placeOfBirth: String = ""
     @State private var navigateToEmployeesList = false
