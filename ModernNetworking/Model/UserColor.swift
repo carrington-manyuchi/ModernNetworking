@@ -10,7 +10,7 @@ import Foundation
 // MARK: - UserColor
 struct UserColor: Codable {
     let page, perPage, total, totalPages: Int
-    let data: [Color]
+    let data: [ColorResponse]  
     let support: Support
 
     enum CodingKeys: String, CodingKey {
@@ -22,8 +22,8 @@ struct UserColor: Codable {
     }
 }
 
-// MARK: - Color
-struct Color: Codable {
+// MARK: - ColorResponse
+struct ColorResponse: Codable {  // 👈 Renamed to ColorResponse
     let id: Int
     let name: String
     let year: Int

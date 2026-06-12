@@ -8,11 +8,13 @@
 import SwiftUI
 
 struct EmployeesView: View {
-    @ObservedObject private var employeesViewModel: EmployeesViewModel
+    @ObservedObject var dashboardViewModel: DashboardViewModel
+    @StateObject private var employeesViewModel: EmployeesViewModel
     @Environment(\.dismiss) private var dismiss
     
-    init(employeesViewModel: EmployeesViewModel) {
-        self.employeesViewModel = employeesViewModel
+    init(dashboardViewModel: DashboardViewModel) {
+        self.dashboardViewModel = dashboardViewModel
+        self._employeesViewModel = StateObject(wrappedValue: EmployeesViewModel(dashboardViewModel: dashboardViewModel))
     }
     
     var body: some View {
@@ -28,27 +30,32 @@ struct EmployeesView: View {
                         )
                         
                         VStack(alignment: .leading, spacing: 4) {
+                            Text("\(employee.firstName ?? "") \(employee.lastName ?? "")")
+                                .font(.system(size: 16, weight: .medium))
                             Text(employee.email ?? "No email")
                                 .font(.system(size: 12))
                                 .foregroundColor(.gray)
                         }
                         
                         Spacer()
-                        if employeesViewModel.selectedEmployee?.id == employee.id {
+                        
+                        if dashboardViewModel.selectedEmployee?.id == employee.id {
                             Image(systemName: "checkmark.circle.fill")
-                                .foregroundColor(.gray.opacity(0.5))
+                                .foregroundColor(.blue)
                                 .font(.system(size: 20))
                         }
                     }
                     .padding(.horizontal)
                     .contentShape(Rectangle())
                     .onTapGesture {
-                        employeesViewModel.selectEmployee(employee)
+                        dashboardViewModel.selectEmployee(employee)
                         dismiss()
                     }
                 }
             } else if employeesViewModel.isLoading {
-                ProgressComponentView(isLoading: $employeesViewModel.isLoading)
+                ProgressView()
+                    .scaleEffect(1.5)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
             } else {
                 Text("No employees found")
                     .foregroundColor(.gray)
@@ -61,13 +68,5 @@ struct EmployeesView: View {
                 await employeesViewModel.fetchEmployees(page: 1)
             }
         }
-    }
-}
-
-#Preview {
-    NavigationStack {
-        let networkService = NetworkServiceImplementation()
-        let repository = NetworkServiceRepositoryImplementation(networkService: networkService)
-        EmployeesView(employeesViewModel: EmployeesViewModel(repository: repository))
     }
 }
