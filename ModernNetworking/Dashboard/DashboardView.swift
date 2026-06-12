@@ -10,6 +10,7 @@ import SwiftUI
 struct DashboardView: View {
     @State private var date = Date()
     @State private var placeOfBirth: String = ""
+    @State private var navigateToEmployeesList = false
     
     var body: some View {
         NavigationStack {
@@ -33,7 +34,10 @@ struct DashboardView: View {
                     Divider()
                 }
                 .onTapGesture {
-                    
+                    navigateToEmployeesList = true
+                }
+                .navigationDestination(isPresented: $navigateToEmployeesList) {
+                    EmployeesView()
                 }
                 
                 VStack( spacing: 30) {
@@ -73,6 +77,7 @@ struct DashboardView: View {
         }
     }
 }
+
 
 #Preview {
     DashboardView()
