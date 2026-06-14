@@ -11,12 +11,11 @@ import Combine
 
 final class ReviewViewModel: ObservableObject {
     @Published var userData: UserData
-    @Published var isSubmitting = false
     @Published var submitSuccess = false
+    @Published var isSubmitting = false
     @Published var errorMessage = ""
-    @Published var showSuccessAlert = false  // 👈 Add this for the alert
     
-    init(userData: UserData) {  // 👈 Fixed extra comma after userData
+    init(userData: UserData) {
         self.userData = userData
     }
     
@@ -45,8 +44,7 @@ final class ReviewViewModel: ObservableObject {
         isSubmitting = true
         errorMessage = ""
         
-        // Simulate API call or data processing
-        try? await Task.sleep(nanoseconds: 1_000_000_000) // 1 second delay
+        try? await Task.sleep(nanoseconds: 1_000_000_000)
         
         // Here you would send the data to your backend
         print("📤 Submitting user data:")
@@ -60,6 +58,5 @@ final class ReviewViewModel: ObservableObject {
         // Simulate success or failure (you can add error simulation if needed)
         isSubmitting = false
         submitSuccess = true
-        showSuccessAlert = true  // 👈 Show the success alert
     }
 }

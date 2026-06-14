@@ -100,7 +100,7 @@ struct ReviewView: View {
                             .background(Color.blue)
                             .cornerRadius(10)
                     } else {
-                        Text("Submit")
+                        Text("Submit Review")
                             .frame(maxWidth: .infinity)
                             .padding()
                             .background(Color.blue)
@@ -122,13 +122,9 @@ struct ReviewView: View {
         }
         .navigationTitle("Review Information")
         .navigationBarTitleDisplayMode(.inline)
-        .alert("Success", isPresented: $viewModel.showSuccessAlert) {  // 👈 Changed: Use separate state
-            Button("OK") {
-                dismiss()  // Dismiss ReviewView on success
-            }
-        } message: {
-            Text("Your information has been submitted successfully!")
-        }
+        .navigationDestination(isPresented: $viewModel.submitSuccess, destination: {
+            SuccessView()
+        })
     }
 }
 

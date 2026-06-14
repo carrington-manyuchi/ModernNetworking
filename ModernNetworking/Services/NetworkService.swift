@@ -59,7 +59,6 @@ final class NetworkServiceImplementation: NetworkService {
     
     // MARK: - GET Request
     func get<U: Decodable>(_ path: String) async throws -> U {
-        // FIXED: Removed apiKey from URL - it goes in headers, not URL path!
         guard let url = URL(string: baseURL + path) else {
             throw APIError.invalidURL
         }
